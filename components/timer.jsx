@@ -8,9 +8,9 @@ class CountDown extends React.Component {
     super(props);
     this.tiRef = React.createRef();
     this.state = {
-      title: "",
-      time: 1100,
-      repeatCount: 0,
+      title: this.props.title,
+      time: this.props.time,
+      repeatCount: this.props.repeatCount,
       repeatOn: false,
       repeatStyle: styles.colorGray,
       rightButt: "Start",
@@ -38,8 +38,7 @@ class CountDown extends React.Component {
     }
   }
 
-  leftButtonHandler(reset, stop) {
-    stop();
+  leftButtonHandler(reset) {
     reset();
   }
 
@@ -62,92 +61,99 @@ class CountDown extends React.Component {
 
   render() {
     return (
-      <Timer
-        initialTime={this.state.time}
-        direction="backward"
-        startImmediately={false}
-        ref={this.tiRef}
-        formatValue={(value) => `${value < 10 ? `0${value}` : value}`}
-        checkpoints={[
-          {
-            time: 0,
-            callback: () => {
-              this.tiRef.current.reset();
+      <View style={[styles.timerBox]}>
+        <Timer
+          initialTime={this.state.time}
+          direction="backward"
+          startImmediately={false}
+          ref={this.tiRef}
+          formatValue={(value) => `${value < 10 ? `0${value}` : value}`}
+          checkpoints={[
+            {
+              time: 0,
+              callback: () => {
+                this.tiRef.current.reset();
 
-              if (this.state.repeatOn) {
-                this.setState({ repeatCount: this.state.repeatCount + 1 });
-                this.tiRef.current.start();
-              } else {
-                this.setState({
-                  rightButt: "Start",
-                  rightButtstyle: styles.greenButt,
-                });
-              }
+                if (this.state.repeatOn) {
+                  this.setState({ repeatCount: this.state.repeatCount + 1 });
+                  this.tiRef.current.start();
+                } else {
+                  this.setState({
+                    rightButt: "Start",
+                    rightButtstyle: styles.greenButt,
+                  });
+                }
+              },
             },
-          },
-        ]}
-      >
-        {({ start, pause, stop, reset, getTimerState }) => (
-          <View style={[styles.timerBox]}>
-            {/* Fav, repeat */}
-            <View>
-              <TouchableOpacity
-                style={{ flexDirection: "row" }}
-                onPress={() => {
-                  this.toggleRepeat();
-                }}
-              >
-                <Text style={this.state.repeatStyle}>Re </Text>
-                <Text style={this.state.repeatStyle}>
-                  {this.state.repeatCount}
+          ]}
+        >
+          {({ start, pause, stop, reset, getTimerState }) => (
+            <React.Fragment>
+              {/* Fav?, repeat */}
+              <View>
+                <TouchableOpacity
+                  style={{ flexDirection: "row" }}
+                  onPress={() => {
+                    this.toggleRepeat();
+                  }}
+                >
+                  <Text style={this.state.repeatStyle}>Re </Text>
+                  <Text style={this.state.repeatStyle}>
+                    {this.state.repeatCount}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Timer title */}
+              <View style={styles.rowCenter}>
+                <Text style={styles.colorYellow}>{this.state.title}</Text>
+              </View>
+
+              {/* Time */}
+              <View style={styles.rowCenter}>
+                <Text style={[styles.timerText, styles.colorYellow]}>
+                  {/* show hour if time >= a hour */}
+                  {this.props.time >= 3600 * 1000 && <Timer.Hours />}
+                  {this.props.time >= 3600 * 1000 && (
+                    <Text style={styles.colorGray}>:</Text>
+                  )}
+                  <Timer.Minutes />
+                  <Text style={styles.colorGray}>:</Text>
+                  <Timer.Seconds />
                 </Text>
-              </TouchableOpacity>
-            </View>
+              </View>
 
-            {/* Timer title */}
-            <View style={styles.rowCenter}>
-              <Text style={styles.colorYellow}>{this.state.title}</Text>
-            </View>
-
-            {/* Time */}
-            <View style={styles.rowCenter}>
-              <Text style={[styles.timerText, styles.colorYellow]}>
-                <Timer.Minutes />
-                <Text style={styles.colorGray}>:</Text>
-                <Timer.Seconds />
-              </Text>
-            </View>
-
-            {/* Control */}
-            <View style={styles.buttons}>
-              {/* left button */}
-              <TouchableOpacity
-                style={[styles.button, styles.buttonBordered]}
-                onPress={() => {
-                  this.leftButtonHandler(reset, stop);
-                }}
-              >
-                <Text style={styles.colorYellow}>Reset</Text>
-              </TouchableOpacity>
-              {/* right button */}
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  styles.buttonBordered,
-                  this.state.rightButtstyle,
-                ]}
-                onPress={() => {
-                  this.rightButtonHandler(getTimerState(), start, pause);
-                }}
-              >
-                <Text style={this.state.rightButtstyle}>
-                  {this.state.rightButt}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      </Timer>
+              {/* Control */}
+              <View style={styles.buttons}>
+                {/* left button */}
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonBordered]}
+                  onPress={() => {
+                    this.leftButtonHandler(reset, stop);
+                  }}
+                >
+                  <Text style={styles.colorYellow}>Reset</Text>
+                </TouchableOpacity>
+                {/* right button */}
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.buttonBordered,
+                    this.state.rightButtstyle,
+                  ]}
+                  onPress={() => {
+                    this.rightButtonHandler(getTimerState(), start, pause);
+                  }}
+                >
+                  <Text style={this.state.rightButtstyle}>
+                    {this.state.rightButt}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </React.Fragment>
+          )}
+        </Timer>
+      </View>
     );
   }
 }
