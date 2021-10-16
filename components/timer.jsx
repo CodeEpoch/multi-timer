@@ -6,7 +6,7 @@ import { styles } from "../StyleSheet";
 class CountDown extends React.Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
+    this.tiRef = React.createRef();
     this.state = {
       title: "",
       time: 1100,
@@ -18,37 +18,29 @@ class CountDown extends React.Component {
     };
   }
 
-  async handleChange(event) {
-    console.log(this.state.repeatOn);
-    await this.setState({ title: "event.target.value" });
-    console.log(this.state.repeatOn);
-  }
-
   async toggleRepeat() {
-    console.log("yeeeeee", this.state.repeatOn);
-
     if (this.state.repeatOn) {
       await this.setState({ repeatOn: false, repeatStyle: styles.colorGray });
     } else {
       await this.setState({ repeatOn: true, repeatStyle: styles.colorYellow });
     }
-    console.log("upda", this.state.repeatOn);
-    // this.handleChange(this);
-    // console.log("upda", this.state.repeatOn);
   }
 
-  updateRepeat() {
-    console.log("update re", reon);
-    if (repeat.on) {
+  updateRepeat(reset) {
+    console.log(reset);
+
+    console.log("repeattts");
+    if (this.state.repeatOn) {
       console.log("reeeeeeeee");
-      setRepeat({ ...repeat, count: repeat.count + 1 });
+      this.setState({ repeatCount: this.state.repeatCount + 1 });
+    } else {
+      this.setState({ rightButt: "Start", rightButtstyle: styles.greenButt });
     }
   }
 
   leftButtonHandler(reset, stop) {
     stop();
     reset();
-    setRightButton({ text: "Start", style: styles.greenButt });
   }
 
   rightButtonHandler(timerState, start, pause) {
@@ -57,29 +49,41 @@ class CountDown extends React.Component {
       case "PAUSED":
       case "STOPPED":
         start();
-        setRightButton({ text: "Pause", style: styles.redButt });
+        this.setState({ rightButt: "Pause", rightButtstyle: styles.redButt });
         break;
       case "PLAYING":
         pause();
-        setRightButton({ text: "Start", style: styles.greenButt });
+        this.setState({ rightButt: "Start", rightButtstyle: styles.greenButt });
         break;
       default:
         break;
     }
   }
+
   render() {
     return (
       <Timer
         initialTime={this.state.time}
-        lastUnit="m"
-        timeToUpdate={1}
         direction="backward"
         startImmediately={false}
+        ref={this.tiRef}
         formatValue={(value) => `${value < 10 ? `0${value}` : value}`}
         checkpoints={[
           {
             time: 0,
-            callback: () => updateRepeat(),
+            callback: () => {
+              this.tiRef.current.reset();
+
+              if (this.state.repeatOn) {
+                this.setState({ repeatCount: this.state.repeatCount + 1 });
+                this.tiRef.current.start();
+              } else {
+                this.setState({
+                  rightButt: "Start",
+                  rightButtstyle: styles.greenButt,
+                });
+              }
+            },
           },
         ]}
       >
@@ -120,7 +124,7 @@ class CountDown extends React.Component {
               <TouchableOpacity
                 style={[styles.button, styles.buttonBordered]}
                 onPress={() => {
-                  leftButtonHandler(reset, stop);
+                  this.leftButtonHandler(reset, stop);
                 }}
               >
                 <Text style={styles.colorYellow}>Reset</Text>
@@ -133,7 +137,7 @@ class CountDown extends React.Component {
                   this.state.rightButtstyle,
                 ]}
                 onPress={() => {
-                  rightButtonHandler(getTimerState(), start, pause);
+                  this.rightButtonHandler(getTimerState(), start, pause);
                 }}
               >
                 <Text style={this.state.rightButtstyle}>
