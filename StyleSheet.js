@@ -76,4 +76,85 @@ export const styles = StyleSheet.create({
     color: "red",
     borderColor: "red",
   },
+
+  // Modal stuff ========================================
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    height: 160,
+    borderColor: "#ffe500",
+    backgroundColor: "black",
+    borderRadius: 20,
+    padding: 25,
+    alignItems: "center",
+    shadowColor: "white",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+  },
+  addTimerButtText: {
+    marginTop: 25,
+    padding: 5,
+    color: "#ffe500",
+    textAlign: "center",
+  },
+  timeInput: {
+    textAlign: "center",
+    width: "25%",
+    height: 60,
+    color: "#777777",
+    paddingLeft: 2,
+    marginTop: 5,
+    borderColor: "#ffe500",
+    borderWidth: 1,
+    borderRadius: 5,
+    fontSize: 30,
+  },
+  titleInput: {
+    textAlign: "center",
+    fontSize: 30,
+    width: "100%",
+    height: 40,
+    color: "#ffe500",
+    borderColor: "#ffe500",
+    borderBottomWidth: 1,
+    marginBottom: 5,
+  },
+
+  // app tuff ==============================================
+  safeContainer: {
+    flex: 1,
+    backgroundColor: "black",
+    paddingTop: 40,
+  },
+  timerCon: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start", // if you want to fill rows left to right
+  },
+  addTimerButt: {
+    position: "absolute",
+    zIndex: 1,
+    right: 10,
+    bottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffe500",
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    padding: 5,
+  },
+  icon: {
+    fontSize: 50,
+    marginTop: -6,
+  },
 });
