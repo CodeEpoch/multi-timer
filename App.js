@@ -17,6 +17,16 @@ import { styles } from "./StyleSheet";
 // import ScrollPicker from "react-native-picker-scrollview";
 // import ScrollPicker from "react-native-wheel-scrollview-picker";
 
+// const listReducer = (state, action) => {
+//   console.log(action);
+//   switch (action.type) {
+//     case "REMOVE_ITEM":
+//       return state.filter((item) => item.title !== action.title);
+//     default:
+//       throw new Error();
+//   }
+// };
+
 export default function App() {
   const newTimer = () => {};
   const grey = "#777777";
@@ -30,13 +40,28 @@ export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
   const [timers, setTimers] = useState([
     { title: "Posture Reminder", time: 30 * 60 * 1000, repeatCount: 0 },
-    { title: "Walk Reminder", time: 60 * 60 * 1000, repeatCount: 2 },
+    { title: "Walk Reminder", time: 60 * 60 * 1000, repeatCount: 0 },
+    { title: "yeee2", time: 1100, repeatCount: 3 },
     { title: "yeee3", time: 1100, repeatCount: 3 },
   ]);
+  // const [timers, dispatchTimers] = React.useReducer(listReducer, [
+  //   { title: "Posture Reminder", time: 30 * 60 * 1000, repeatCount: 0 },
+  //   { title: "Walk Reminder", time: 60 * 60 * 1000, repeatCount: 0 },
+  //   { title: "yeee2", time: 1100, repeatCount: 3 },
+  //   { title: "yeee33", time: 1100, repeatCount: 3 },
+  //   { title: "yee4e3", time: 1100, repeatCount: 3 },
+  //   { title: "ye6ee3", time: 1100, repeatCount: 3 },
+  //   { title: "ye5ee3", time: 1100, repeatCount: 3 },
+  // ]);
 
   const addTimer = (title, hour, min, sec) => {
+    const result = timers.filter((tim) => tim.title == title);
+    if (result.length > 0) {
+      Alert.alert("Error", "Title exist");
+      return;
+    }
     let newTime = hour * 60 * 60 * 1000 + min * 60 * 1000 + sec * 1000;
-    title = title ? title : "aya";
+    title = title ? title : "aya " + timers.length;
     newTime = newTime ? newTime : 300 * 1000;
     setTimers((prev) => [
       ...prev,
@@ -48,7 +73,17 @@ export default function App() {
     newMin(undefined);
     newSec(undefined);
     newTitle("");
-    console.log("add ", hour, min, sec, newTime);
+  };
+
+  const deleteTime = (title) => {
+    console.log("deleteTime", title);
+    // dispatchTimers({ type: "REMOVE_ITEM", title });
+    // setTimers(timers.filter((tim) => tim.title !== title));
+    setTimers((prev) => [{ title: "yeee3", time: 1100, repeatCount: 3 }]);
+  };
+
+  const editTime = () => {
+    console.log("updateTime");
   };
 
   return (
@@ -62,6 +97,8 @@ export default function App() {
               title={timer.title}
               time={timer.time}
               repeatCount={timer.repeatCount}
+              onEditTime={editTime}
+              onDeleteTime={deleteTime}
             />
           ))}
         </View>

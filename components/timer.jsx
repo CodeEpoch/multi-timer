@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import Timer from "react-compound-timer";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
+  Modal,
+  Pressable,
+} from "react-native";
 import { styles } from "../StyleSheet";
+import Timer from "react-compound-timer";
 
+// https://volkov97.github.io/react-compound-timer/
 class CountDown extends React.Component {
   constructor(props) {
     super(props);
@@ -15,6 +23,7 @@ class CountDown extends React.Component {
       repeatStyle: styles.colorGray,
       rightButt: "Start",
       rightButtstyle: styles.greenButt,
+      modalVisible: false,
     };
   }
 
@@ -28,18 +37,15 @@ class CountDown extends React.Component {
 
   updateRepeat(reset) {
     console.log(reset);
-
-    console.log("repeattts");
     if (this.state.repeatOn) {
-      console.log("reeeeeeeee");
       this.setState({ repeatCount: this.state.repeatCount + 1 });
     } else {
       this.setState({ rightButt: "Start", rightButtstyle: styles.greenButt });
     }
   }
 
-  leftButtonHandler(reset) {
-    reset();
+  editTime() {
+    console.log("editTime");
   }
 
   rightButtonHandler(timerState, start, pause) {
@@ -73,7 +79,6 @@ class CountDown extends React.Component {
               time: 0,
               callback: () => {
                 this.tiRef.current.reset();
-
                 if (this.state.repeatOn) {
                   this.setState({ repeatCount: this.state.repeatCount + 1 });
                   this.tiRef.current.start();
@@ -90,9 +95,10 @@ class CountDown extends React.Component {
           {({ start, pause, stop, reset, getTimerState }) => (
             <React.Fragment>
               {/* Fav?, repeat */}
-              <View>
+              <View style={{ flexDirection: "row" }}>
+                {/* REPEAT */}
                 <TouchableOpacity
-                  style={{ flexDirection: "row" }}
+                  style={{ flexDirection: "row", flex: 0.9 }}
                   onPress={() => {
                     this.toggleRepeat();
                   }}
@@ -102,25 +108,46 @@ class CountDown extends React.Component {
                     {this.state.repeatCount}
                   </Text>
                 </TouchableOpacity>
+                {/* DELETE */}
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    alignSelf: "flex-end",
+                    flex: 0.1,
+                  }}
+                  onPress={() => {
+                    this.props.onDeleteTime(this.state.title);
+                  }}
+                >
+                  <Text style={{ color: "red", fontWeight: "bold" }}>X</Text>
+                </TouchableOpacity>
               </View>
 
               {/* Timer title */}
               <View style={styles.rowCenter}>
-                <Text style={styles.colorYellow}>{this.state.title}</Text>
+                <Text style={styles.colorYellow} numberOfLines={1}>
+                  {this.state.title}
+                </Text>
               </View>
 
               {/* Time */}
               <View style={styles.rowCenter}>
-                <Text style={[styles.timerText, styles.colorYellow]}>
-                  {/* show hour if time >= a hour */}
-                  {this.props.time >= 3600 * 1000 && <Timer.Hours />}
-                  {this.props.time >= 3600 * 1000 && (
+                <TouchableOpacity
+                  onPress={() => {
+                    this.editTime();
+                  }}
+                >
+                  <Text style={[styles.timerText, styles.colorYellow]}>
+                    {/* show hour if time >= a hour */}
+                    {this.state.time >= 3600 * 1000 && <Timer.Hours />}
+                    {this.state.time >= 3600 * 1000 && (
+                      <Text style={styles.colorGray}>:</Text>
+                    )}
+                    <Timer.Minutes />
                     <Text style={styles.colorGray}>:</Text>
-                  )}
-                  <Timer.Minutes />
-                  <Text style={styles.colorGray}>:</Text>
-                  <Timer.Seconds />
-                </Text>
+                    <Timer.Seconds />
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               {/* Control */}
@@ -129,7 +156,7 @@ class CountDown extends React.Component {
                 <TouchableOpacity
                   style={[styles.button, styles.buttonBordered]}
                   onPress={() => {
-                    this.leftButtonHandler(reset, stop);
+                    reset();
                   }}
                 >
                   <Text style={styles.colorYellow}>Reset</Text>
