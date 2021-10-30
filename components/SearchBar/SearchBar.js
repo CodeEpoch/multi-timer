@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-// import { styled, alpha } from "@material-ui/core/styles";
-// import div from "@material-ui/core/div";
-// import div from "@material-ui/core/div";
-// import div from "@material-ui/core/div";
-// import InputBase from "@material-ui/core/InputBase";
-// import SearchIcon from "@material-ui/icons/Search";
 import SortButton from "./SortButton";
 import AddTimerBtn from "./AddTimerBtn";
 import { TextInput, View } from "react-native";
+// https://www.npmjs.com/package/react-native-popup-menu
 import { MenuProvider } from "react-native-popup-menu";
+
+// https://www.npmjs.com/package/react-native-paper
+// https://www.npmjs.com/package/react-native-text-input-mask
+
 export default function SearchBar(props) {
   const { createTimer, changeInputFilter, sortList } = props;
   const [inputFilter, setinputFilter] = useState("");

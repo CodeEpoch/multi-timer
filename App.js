@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Modal } from "react-native";
 import FullTimer from "./components/SingleTimer/FullTimer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import React, { useEffect, useState } from "react";
+// https://sweetalert2.github.io/
 import Swal from "sweetalert2";
 
 // import "./index.css";

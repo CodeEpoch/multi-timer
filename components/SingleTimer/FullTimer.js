@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
+// https://github.com/amrlabib/react-timer-hook
 import { useTimer } from "react-timer-hook";
-// import { View } from "@material-ui/core";
-// import View from "@material-ui/lab/View";
-// import View from "@material-ui/lab/View";
-// import View from "@material-ui/lab/View";
 import TitleBar from "./TitleBar";
 import TimeButtons from "./TimeButtons";
 import * as utils from "../utils";
-import { View, Text, TextInput } from "react-native";
+import { View, Text } from "react-native";
+
 import { layoutStyles } from "../../styles/layouts";
 import { timerStyles } from "../../styles/timer";
-// import "../../index.css";
+
+// https://github.com/react-native-text-input-mask/react-native-text-input-mask
+import TextInputMask from "react-native-text-input-mask";
+import { TextInput } from "react-native-paper";
 
 export default function FullTimer(props) {
   let { expiryTimestamp, updateTimeoutSeconds, removeTimer, id, isHidden } =
@@ -48,12 +49,12 @@ export default function FullTimer(props) {
     <View>
       <View style={timerStyles.actualTimer}>
         {clockValues.map((item, index) => (
-          <View key={index}>
+          <>
             <Text style={timerStyles.timerText}>
               {item < 10 ? `0${item}` : item}
             </Text>
-            <Text>{index === clockValues.length - 1 ? "" : ":"}</Text>
-          </View>
+            {index === clockValues.length - 1 ? "" : ":"}
+          </>
         ))}
       </View>
       <TimeButtons
@@ -71,17 +72,18 @@ export default function FullTimer(props) {
     <View style={layoutStyles.wrapper}>
       <TitleBar id={id} removeTimer={removeTimer} />
       <View>
-        <TextInput
+        {/* <TextInput
           ampm={false}
           ampmInClock={false}
           views={["hours", "minutes", "seconds"]}
           inputFormat="HH:mm:ss"
           mask="__:__:__"
           value={input}
-          onChangeText={(val) => {
-            setInput(new Date(val));
-          }}
-        />
+          // onChangeText={(val) => {
+          //   setInput(new Date(val));
+          // }}
+        /> */}
+        <TextInput label="Phone number" />
       </View>
       <TimerBody />
     </View>
