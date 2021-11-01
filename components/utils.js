@@ -1,20 +1,26 @@
-import audioURL from "../media/Leapfrog.ogg";
+// import * as audioURL from "../media/Leapfrog.ogg";
 // https://sweetalert2.github.io/
 import Swal from "sweetalert2";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 
 export function getIdName(id) {
   return id.substring(0, id.lastIndexOf(" "));
 }
 
 export function playAudio(id) {
-  Swal.close();
-  let audio = new Audio(audioURL);
-  audio.loop = true;
-  audio.play();
-  Swal.fire({ title: `${getIdName(id)}'s off`, icon: "warning" }).then(() => {
-    audio.loop = false;
-    audio.pause();
-  });
+  // let audio = new Audio(audioURL);
+  // audio.loop = true;
+  // audio.play();
+  Alert.alert("Alert Title", "My Alert Msg", [
+    {
+      text: "OK",
+      onPress: () => {
+        // audio.loop = false;
+        // audio.pause();
+      },
+    },
+  ]);
 }
 
 /**
@@ -23,6 +29,7 @@ export function playAudio(id) {
  * @returns {Date|number}
  */
 export function parseTime(input, onlySeconds) {
+  // console.log("parseTime===========", input);
   if (!input || input === null) return getMidNight();
   let time = new Date();
   let durationSeconds =
@@ -39,12 +46,4 @@ function getMidNight() {
   const time = new Date();
   time.setHours(0, 0, 0, 0);
   return time;
-}
-
-export function getInputStorage(id) {
-  let inputStorage = localStorage.getItem(`input ${id}`);
-  if (inputStorage === "null" || !inputStorage) {
-    return getMidNight();
-  }
-  return new Date(JSON.parse(inputStorage.toString()));
 }

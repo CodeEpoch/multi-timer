@@ -1,22 +1,17 @@
 import React, { useState, useEffect } from "react";
 // https://github.com/amrlabib/react-timer-hook
 import { useTimer } from "react-timer-hook";
-import TitleBar from "./TitleBar";
 import TimeButtons from "./TimeButtons";
 import * as utils from "../utils";
-import { View, Text } from "react-native";
-
+import { View, Text, Modal, TextInput, Pressable } from "react-native";
+import { styles } from "../../styles/StyleSheet";
 import { layoutStyles } from "../../styles/layouts";
 import { timerStyles } from "../../styles/timer";
-
-// https://github.com/react-native-text-input-mask/react-native-text-input-mask
-import TextInputMask from "react-native-text-input-mask";
-import { TextInput } from "react-native-paper";
 
 export default function FullTimer(props) {
   let { expiryTimestamp, updateTimeoutSeconds, removeTimer, id, isHidden } =
     props;
-
+  const [input, setInput] = useState();
   const { seconds, minutes, hours, isRunning, pause, resume, restart } =
     useTimer({
       autoStart: false,
@@ -29,63 +24,164 @@ export default function FullTimer(props) {
       },
     });
 
-  const clockValues = [hours, minutes, seconds];
-
-  const [input, setInput] = useState(utils.getInputStorage(id));
+  const href = React.createRef();
+  const mref = React.createRef();
+  const sref = React.createRef();
+  const [title, newTitle] = useState(id);
+  const [hour, newHour] = useState(hours);
+  const [min, newMin] = useState(minutes);
+  const [sec, newSec] = useState(seconds);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    console.log("input", input);
-    localStorage.setItem(`input ${id}`, JSON.stringify(input));
-    updateTimeoutSeconds(utils.parseTime(input, true));
-    let time = utils.parseTime(input);
-    restart(time);
-    pause();
-    // eslint-disable-next-line
+    const time = new Date();
+    time.setHours(0, 0, expiryTimestamp, 0);
+    setInput(time);
+  }, []);
+
+  useEffect(() => {
+    // check for input cuz input might not be initialized at start
+    if (input) {
+      let time = utils.parseTime(input);
+      restart(time);
+      pause();
+    }
+    // console.log("inputtttttttttttttt", utils.parseTime(input, true));
+    // console.log("seconds, minutes, hours", seconds, minutes, hours);
   }, [input]);
 
   if (isHidden) return <></>;
 
-  const TimerBody = () => (
-    <View>
+  const editTimer = (hour, min, sec) => {
+    let anewSec = hour * 60 * 60 + min * 60 + sec;
+    anewSec = anewSec ? anewSec : 300;
+
+    const newtime = new Date();
+    newtime.setHours(hour, min, sec, 0);
+    setInput(newtime);
+    updateTimeoutSeconds(anewSec);
+    restart(anewSec);
+    pause();
+    setModalVisible(false);
+  };
+
+  return (
+    <View style={layoutStyles.wrapper}>
+      <View style={layoutStyles.titleBar}>
+        <Text>{utils.getIdName(id)}</Text>
+        <View style={styles.rowJustiCenter}>
+          <Pressable
+            onPress={() => {
+              newHour(hours);
+              newMin(minutes);
+              newSec(seconds);
+              setModalVisible(true);
+            }}
+          >
+            <Text>Edit </Text>
+          </Pressable>
+          <Pressable
+            aria-label="delete"
+            onPress={() => {
+              removeTimer();
+            }}
+          >
+            <Text style={{ backgroundColor: "red" }}>X</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      {/* TimerBody */}
       <View style={timerStyles.actualTimer}>
-        {clockValues.map((item, index) => (
-          <>
-            <Text style={timerStyles.timerText}>
-              {item < 10 ? `0${item}` : item}
-            </Text>
-            {index === clockValues.length - 1 ? "" : ":"}
-          </>
-        ))}
+        {/* Clock */}
+        <View style={styles.rowJustiCenter}>
+          <Text style={styles.timerText}>
+            {hours < 10 ? `0${hours}` : hours}
+          </Text>
+          <Text>:</Text>
+          <Text style={styles.timerText}>
+            {minutes < 10 ? `0${minutes}` : minutes}
+          </Text>
+          <Text>:</Text>
+          <Text style={styles.timerText}>
+            {seconds < 10 ? `0${seconds}` : seconds}
+          </Text>
+        </View>
       </View>
       <TimeButtons
         pause={() => pause()}
         resume={() => resume()}
         restart={(time) => restart(time)}
         isRunning={() => isRunning}
-        clockValues={() => clockValues}
         input={() => input}
       />
-    </View>
-  );
-
-  return (
-    <View style={layoutStyles.wrapper}>
-      <TitleBar id={id} removeTimer={removeTimer} />
-      <View>
-        {/* <TextInput
-          ampm={false}
-          ampmInClock={false}
-          views={["hours", "minutes", "seconds"]}
-          inputFormat="HH:mm:ss"
-          mask="__:__:__"
-          value={input}
-          // onChangeText={(val) => {
-          //   setInput(new Date(val));
-          // }}
-        /> */}
-        <TextInput label="Phone number" />
-      </View>
-      <TimerBody />
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(!modalVisible)}
+      >
+        <View
+          style={[styles.modalView, styles.centeredView]}
+          keyboardShouldPersistTaps={"handled"}
+        >
+          <TextInput
+            style={styles.titleInput}
+            onChangeText={newTitle}
+            value={title}
+            placeholder="Title"
+            placeholderTextColor="#777777"
+          />
+          <View style={styles.rowCenter}>
+            <TextInput
+              ref={href}
+              style={styles.timeInput}
+              value={hour.toString()}
+              onChangeText={(value) => {
+                newHour(Number(value));
+                if (value > 9) mref.current.focus();
+              }}
+              placeholder="hh"
+              placeholderTextColor="#777777"
+              maxLength={2}
+              keyboardType="numeric"
+            />
+            <TextInput
+              ref={mref}
+              style={styles.timeInput}
+              value={min.toString()}
+              onChangeText={(value) => {
+                newMin(Number(value));
+                if (value > 9) sref.current.focus();
+              }}
+              placeholder="mm"
+              placeholderTextColor="#777777"
+              maxLength={2}
+              keyboardType="numeric"
+            />
+            <TextInput
+              ref={sref}
+              style={styles.timeInput}
+              value={sec.toString()}
+              onChangeText={(value) => {
+                newSec(Number(value));
+              }}
+              placeholder="ss"
+              placeholderTextColor="#777777"
+              maxLength={2}
+              keyboardType="numeric"
+            />
+          </View>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => editTimer(hour, min, sec)}
+          >
+            <Text style={[styles.addTimerButtText, styles.buttonBordered]}>
+              Edit Timer
+            </Text>
+          </Pressable>
+        </View>
+      </Modal>
     </View>
   );
 }

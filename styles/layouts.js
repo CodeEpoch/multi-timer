@@ -8,7 +8,6 @@ export const layoutStyles = StyleSheet.create({
     justifyContent: "space-between",
   },
   wrapper: {
-    boxSizing: "border-box",
     width: "50%",
   },
 });

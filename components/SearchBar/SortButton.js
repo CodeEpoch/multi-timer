@@ -20,7 +20,6 @@ function SortButton(props) {
 
   const handleClose = (sortMethod) => {
     setAnchorEl(null);
-    console.log(sortMethod);
     if (typeof sortMethod !== "object") sortList(sortMethod);
   };
 

@@ -7,7 +7,7 @@ export const timerStyles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    fontSize: "32",
+    fontSize: 32,
   },
   timerText: {
     backgroundColor: "yellow",

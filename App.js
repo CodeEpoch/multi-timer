@@ -1,40 +1,68 @@
-import { StyleSheet, Text, View, Modal } from "react-native";
+//// Checking for AsyncStorage
+// if (__DEV__) {
+//   import("./ReactotronConfig").then(() => console.log("Reactotron Configured"));
+// }
+// import Reactotron from "reactotron-react-native";
+import { Text, View, Modal, TextInput, Pressable } from "react-native";
 import FullTimer from "./components/SingleTimer/FullTimer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import React, { useEffect, useState } from "react";
 // https://sweetalert2.github.io/
 import Swal from "sweetalert2";
-
+import { styles } from "./styles/StyleSheet";
 // import "./index.css";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as utils from "./components/utils";
+
+//===================================
+import { LogBox } from "react-native";
+// Ignore log notification by message:
+LogBox.ignoreLogs(["Warning: ..."]);
+// Ignore all log notifications:
+LogBox.ignoreAllLogs();
+//====================================
 
 export default function App() {
-  const [timerList, setTimerList] = useState(getStorage());
+  const tt = [
+    { timeoutSeconds: "3720010", id: "wahahah 2", expiryTimestamp: "3720010" },
+    { timeoutSeconds: 1830, id: "yeee 2", expiryTimestamp: 1830 },
+  ];
+  const [timerList, setTimerList] = useState([]);
   const [InputFilter, setInputFilter] = useState("");
+  const [title, newTitle] = useState("yeee");
+  const [time, newTime] = useState(60);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  function getStorage() {
-    let timerStorage = localStorage.getItem("timerList");
-    if (!timerStorage || timerStorage === []) return [];
-    return JSON.parse(timerStorage.toString());
-  }
+  // get timerList on init
+  useEffect(() => {
+    async function getStorage() {
+      try {
+        let timerStorage = await AsyncStorage.getItem("timerList");
+        setTimerList(JSON.parse(timerStorage));
+      } catch (e) {
+        return [];
+      }
+    }
+    getStorage();
+  }, []);
+
+  // update timers in AsyncStorage
+  useEffect(() => {
+    async function setTimers(timerList) {
+      await AsyncStorage.setItem("timerList", JSON.stringify(timerList));
+    }
+    timerList.length !== 0 ? setTimers(timerList) : null;
+  }, [timerList]);
 
   async function createTimer() {
-    await Swal.fire({
-      title: "Enter timer's name",
-      input: "text",
-      inputValidator: (value) => {
-        if (!value) return "You need to write something!";
+    setTimerList((timerList) => [
+      ...timerList,
+      {
+        timeoutSeconds: 55,
+        id: `${title} ${timerList.length}`,
+        expiryTimestamp: 55,
       },
-    }).then((result) => {
-      if (!result.value) return;
-      setTimerList((timerList) => [
-        ...timerList,
-        {
-          timeoutSeconds: 0,
-          id: `${result.value} ${timerList.length}`,
-          expiryTimestamp: 1,
-        },
-      ]);
-    });
+    ]);
   }
 
   function timeChange(timer, seconds) {
@@ -44,6 +72,7 @@ export default function App() {
     });
     newList[timerIndex].timeoutSeconds = seconds;
     newList[timerIndex].expiryTimestamp = seconds;
+    // console.log("timeChange", timer, "sec", seconds);
     setTimerList(newList);
   }
 
@@ -76,34 +105,63 @@ export default function App() {
     setTimerList((timerList) => timerList.filter((t) => t.id !== timer.id));
   }
 
-  useEffect(() => {
-    console.log("timerList", timerList);
-    localStorage.setItem("timerList", JSON.stringify(timerList));
-  }, [timerList]);
-
   // HTML section
   return (
     <React.Fragment>
-      <SearchBar
-        createTimer={() => createTimer()}
-        changeInputFilter={(event) => setInputFilter(event)}
-        sortList={(sortMethod) => sortTimerList(sortMethod)}
-      />
-      {timerList.map((timer) => (
-        <FullTimer
-          key={timer.id}
-          id={timer.id}
-          isHidden={
-            !timer.id
-              .substring(0, timer.id.lastIndexOf(" "))
-              .toLocaleLowerCase() // id without index
-              .includes(InputFilter.toLocaleLowerCase())
-          }
-          expiryTimestamp={timer.expiryTimestamp}
-          removeTimer={() => removeTimer(timer)}
-          updateTimeoutSeconds={(seconds) => timeChange(timer, seconds)}
+      <View style={styles.safeContainer}>
+        <SearchBar
+          createTimer={() => setModalVisible(true)}
+          changeInputFilter={(event) => setInputFilter(event)}
+          sortList={(sortMethod) => sortTimerList(sortMethod)}
         />
-      ))}
+        {/* {console.log("timerList=====", timerList)} */}
+        {timerList.map((timer) => (
+          <FullTimer
+            key={timer.id}
+            id={timer.id}
+            isHidden={
+              !timer.id
+                .substring(0, timer.id.lastIndexOf(" "))
+                .toLocaleLowerCase() // id without index
+                .includes(InputFilter.toLocaleLowerCase())
+            }
+            expiryTimestamp={timer.expiryTimestamp}
+            removeTimer={() => removeTimer(timer)}
+            updateTimeoutSeconds={(seconds) => timeChange(timer, seconds)}
+          />
+        ))}
+      </View>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(!modalVisible)}
+      >
+        <View
+          style={[styles.modalView, styles.centeredView]}
+          keyboardShouldPersistTaps={"handled"}
+        >
+          <TextInput
+            style={styles.titleInput}
+            onChangeText={newTitle}
+            value={title}
+            placeholder="Title"
+            placeholderTextColor="#777777"
+          />
+
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => {
+              createTimer(title, time);
+              setModalVisible(false);
+            }}
+          >
+            <Text style={[styles.addTimerButtText, styles.buttonBordered]}>
+              Create Timer
+            </Text>
+          </Pressable>
+        </View>
+      </Modal>
     </React.Fragment>
   );
 }

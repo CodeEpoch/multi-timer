@@ -4,33 +4,29 @@
 // import div from "@material-ui/icons/Replay";
 import * as utils from "../utils";
 import React, { useState } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { styles } from "../../styles/StyleSheet";
 
 export default function TimeButtons(props) {
-  const { pause, resume, restart, isRunning, clockValues, input } = props;
+  const { pause, resume, restart, isRunning, input } = props;
   return (
-    <View className="buttons">
-      <Pressable
-        // style={{ color: "white" }}
+    <View style={styles.rowJustiCenter}>
+      <TouchableOpacity
+        style={{ backgroundColor: "red", zIndex: 1 }}
         onPress={() => {
           if (!isRunning()) {
-            if (!clockValues().every((e) => Boolean(e))) {
-              let time = utils.parseTime(input());
-              if (!time) return;
-              restart(time);
-            } else {
-              resume();
-            }
+            resume();
           } else {
             pause();
           }
         }}
       >
         {!isRunning() ? <Text>Play</Text> : <Text>Pause</Text>}
-      </Pressable>
+      </TouchableOpacity>
       <Pressable
-        // style={{ color: "white" }}
+        style={{ backgroundColor: "blue" }}
         onPress={() => {
+          console.log("restarttttttttt");
           let time = utils.parseTime(input());
           restart(time);
           pause();
