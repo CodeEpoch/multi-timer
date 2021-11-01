@@ -156,10 +156,12 @@ export default function FullTimer(props) {
 
       {/* Clock */}
       <View style={[styles.rowJustiCenter, { alignItems: "center" }]}>
-        <Text style={[styles.timerText, styles.colorYellow]}>
-          {hours < 10 ? `0${hours}` : hours}
-        </Text>
-        <Text style={styles.colorGray}>:</Text>
+        {hours > 0 ? (
+          <Text style={[styles.timerText, styles.colorYellow]}>
+            {hours < 10 ? `0${hours}` : hours}
+          </Text>
+        ) : null}
+        {hours > 0 ? <Text style={styles.colorGray}>:</Text> : null}
         <Text style={[styles.timerText, styles.colorYellow]}>
           {minutes < 10 ? `0${minutes}` : minutes}
         </Text>
