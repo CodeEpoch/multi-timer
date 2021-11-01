@@ -74,14 +74,15 @@ export default function App() {
     ]);
   }
 
-  function timeChange(timer, seconds) {
+  function timerChange(timer, seconds, title) {
     let newList = [...timerList];
     const timerIndex = newList.findIndex((obj) => {
       return obj.id === timer.id;
     });
+    newList[timerIndex].id = title;
     newList[timerIndex].timeoutSeconds = seconds;
     newList[timerIndex].expiryTimestamp = seconds;
-    // console.log("timeChange", timer, "sec", seconds);
+    // console.log("timerChange", timer, "sec", seconds);
     setTimerList(newList);
   }
 
@@ -139,7 +140,9 @@ export default function App() {
                 }
                 expiryTimestamp={timer.expiryTimestamp}
                 removeTimer={() => removeTimer(timer)}
-                updateTimeoutSeconds={(seconds) => timeChange(timer, seconds)}
+                timerChange={(seconds, title) =>
+                  timerChange(timer, seconds, title)
+                }
               />
             ))}
           </View>

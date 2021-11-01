@@ -8,8 +8,7 @@ import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function FullTimer(props) {
-  let { expiryTimestamp, updateTimeoutSeconds, removeTimer, id, isHidden } =
-    props;
+  let { expiryTimestamp, timerChange, removeTimer, id, isHidden } = props;
   const [input, setInput] = useState();
   const { seconds, minutes, hours, isRunning, pause, resume, restart } =
     useTimer({
@@ -64,7 +63,7 @@ export default function FullTimer(props) {
     const newtime = new Date();
     newtime.setHours(hour, min, sec, 0);
     setInput(newtime);
-    updateTimeoutSeconds(anewSec);
+    timerChange(anewSec, title);
     restart(anewSec);
     pause();
     setModalVisible(false);
@@ -150,7 +149,7 @@ export default function FullTimer(props) {
       {/* TITLE */}
       <View style={[styles.rowJustiCenter, { paddingTop: 5 }]}>
         <Text style={styles.colorYellow} numberOfLines={1}>
-          {utils.getIdName(id)}
+          {id}
         </Text>
       </View>
 
@@ -179,7 +178,6 @@ export default function FullTimer(props) {
             console.log("restarttttttttt");
             let time = utils.parseTime(input);
             restart(time);
-            setRightButton({ text: "Start", style: styles.greenButt });
             pause();
           }}
         >
@@ -194,10 +192,8 @@ export default function FullTimer(props) {
           onPress={() => {
             if (!isRunning) {
               resume();
-              setRightButton({ text: "Pause", style: styles.redButt });
             } else {
               pause();
-              setRightButton({ text: "Start", style: styles.greenButt });
             }
           }}
         >
