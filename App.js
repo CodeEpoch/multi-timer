@@ -3,7 +3,14 @@
 //   import("./ReactotronConfig").then(() => console.log("Reactotron Configured"));
 // }
 // import Reactotron from "reactotron-react-native";
-import { Text, View, Modal, TextInput, Pressable } from "react-native";
+import {
+  Text,
+  View,
+  Modal,
+  TextInput,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import FullTimer from "./components/SingleTimer/FullTimer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import React, { useEffect, useState } from "react";
@@ -13,6 +20,8 @@ import { styles } from "./styles/StyleSheet";
 // import "./index.css";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as utils from "./components/utils";
+import { MenuProvider } from "react-native-popup-menu";
+import { FontAwesome } from "@expo/vector-icons";
 
 //===================================
 import { LogBox } from "react-native";
@@ -54,7 +63,7 @@ export default function App() {
     timerList.length !== 0 ? setTimers(timerList) : null;
   }, [timerList]);
 
-  async function createTimer() {
+  function createTimer() {
     setTimerList((timerList) => [
       ...timerList,
       {
@@ -107,61 +116,68 @@ export default function App() {
 
   // HTML section
   return (
-    <React.Fragment>
-      <View style={styles.safeContainer}>
-        <SearchBar
-          createTimer={() => setModalVisible(true)}
-          changeInputFilter={(event) => setInputFilter(event)}
-          sortList={(sortMethod) => sortTimerList(sortMethod)}
-        />
-        {/* {console.log("timerList=====", timerList)} */}
-        {timerList.map((timer) => (
-          <FullTimer
-            key={timer.id}
-            id={timer.id}
-            isHidden={
-              !timer.id
-                .substring(0, timer.id.lastIndexOf(" "))
-                .toLocaleLowerCase() // id without index
-                .includes(InputFilter.toLocaleLowerCase())
-            }
-            expiryTimestamp={timer.expiryTimestamp}
-            removeTimer={() => removeTimer(timer)}
-            updateTimeoutSeconds={(seconds) => timeChange(timer, seconds)}
-          />
-        ))}
-      </View>
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
-      >
-        <View
-          style={[styles.modalView, styles.centeredView]}
-          keyboardShouldPersistTaps={"handled"}
-        >
-          <TextInput
-            style={styles.titleInput}
-            onChangeText={newTitle}
-            value={title}
-            placeholder="Title"
-            placeholderTextColor="#777777"
+    <View style={styles.safeContainer}>
+      <ScrollView>
+        <MenuProvider>
+          <SearchBar
+            createTimer={() => setModalVisible(true)}
+            changeInputFilter={(event) => setInputFilter(event)}
+            sortList={(sortMethod) => sortTimerList(sortMethod)}
           />
 
-          <Pressable
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => {
-              createTimer(title, time);
-              setModalVisible(false);
-            }}
+          {/* {console.log("timerList=====", timerList)} */}
+          <View style={styles.timerCon}>
+            {timerList.map((timer) => (
+              <FullTimer
+                key={timer.id}
+                id={timer.id}
+                isHidden={
+                  !timer.id
+                    .substring(0, timer.id.lastIndexOf(" "))
+                    .toLocaleLowerCase() // id without index
+                    .includes(InputFilter.toLocaleLowerCase())
+                }
+                expiryTimestamp={timer.expiryTimestamp}
+                removeTimer={() => removeTimer(timer)}
+                updateTimeoutSeconds={(seconds) => timeChange(timer, seconds)}
+              />
+            ))}
+          </View>
+        </MenuProvider>
+
+        {/* Create timer Modal */}
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(!modalVisible)}
+        >
+          <View
+            style={[styles.modalView, styles.centeredView]}
+            keyboardShouldPersistTaps={"handled"}
           >
-            <Text style={[styles.addTimerButtText, styles.buttonBordered]}>
-              Create Timer
-            </Text>
-          </Pressable>
-        </View>
-      </Modal>
-    </React.Fragment>
+            <TextInput
+              style={styles.titleInput}
+              onChangeText={newTitle}
+              value={title}
+              placeholder="Title"
+              placeholderTextColor="#777777"
+            />
+
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => {
+                createTimer(title, time);
+                setModalVisible(false);
+              }}
+            >
+              <Text style={[styles.addTimerButtText, styles.buttonBordered]}>
+                Create Timer
+              </Text>
+            </Pressable>
+          </View>
+        </Modal>
+      </ScrollView>
+    </View>
   );
 }

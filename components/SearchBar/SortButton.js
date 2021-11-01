@@ -1,31 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text } from "react-native";
-// import Menu from "@material-ui/core/Menu";
-// import { div } from "@material-ui/core";
-// import SortIcon from "@material-ui/icons/Sort";
-// import { IconButton } from "@material-ui/core";
 import {
   Menu,
   MenuOptions,
   MenuOption,
   MenuTrigger,
 } from "react-native-popup-menu";
+import { FontAwesome } from "@expo/vector-icons";
 
 function SortButton(props) {
   const { sortList } = props;
 
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const open = Boolean(anchorEl);
-
   const handleClose = (sortMethod) => {
-    setAnchorEl(null);
     if (typeof sortMethod !== "object") sortList(sortMethod);
   };
 
   return (
     <Menu>
-      <MenuTrigger text="Select action: " />
+      <MenuTrigger>
+        <FontAwesome
+          name="sort"
+          size={24}
+          style={{ padding: 7, color: "black" }}
+        />
+      </MenuTrigger>
       <MenuOptions>
         <MenuOption onSelect={() => handleClose("A-Z")}>
           <Text> A-Z</Text>

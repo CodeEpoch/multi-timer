@@ -25,14 +25,10 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     letterSpacing: 1,
   },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
   button: {
     flex: 0.5,
     height: 40,
-    marginVertical: 10,
+    marginVertical: 5,
     marginHorizontal: 2,
     justifyContent: "center",
     alignItems: "center",
@@ -62,6 +58,8 @@ export const styles = StyleSheet.create({
     textAlign: "right",
     alignSelf: "stretch",
   },
+
+  // COLORS ========================================
   colorYellow: {
     color: "#ffe500",
   },
@@ -131,28 +129,16 @@ export const styles = StyleSheet.create({
   // app tuff ==============================================
   safeContainer: {
     flex: 1,
-    // backgroundColor: "black",
+    backgroundColor: "black",
     paddingTop: 40,
   },
   timerCon: {
-    flex: 1,
+    flex: 11,
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start", // if you want to fill rows left to right
   },
-  addTimerButt: {
-    position: "absolute",
-    zIndex: 1,
-    right: 10,
-    bottom: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffe500",
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    padding: 5,
-  },
+
   icon: {
     fontSize: 50,
     marginTop: -6,

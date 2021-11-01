@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 // https://github.com/amrlabib/react-timer-hook
 import { useTimer } from "react-timer-hook";
-import TimeButtons from "./TimeButtons";
 import * as utils from "../utils";
 import { View, Text, Modal, TextInput, Pressable } from "react-native";
 import { styles } from "../../styles/StyleSheet";
-import { layoutStyles } from "../../styles/layouts";
-import { timerStyles } from "../../styles/timer";
+import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function FullTimer(props) {
   let { expiryTimestamp, updateTimeoutSeconds, removeTimer, id, isHidden } =
@@ -32,6 +31,12 @@ export default function FullTimer(props) {
   const [min, newMin] = useState(minutes);
   const [sec, newSec] = useState(seconds);
   const [modalVisible, setModalVisible] = useState(false);
+  // const [repeatOn, setRepeatOn] = useState(false);
+  const [repeat, setRepeat] = useState({
+    count: 0,
+    on: false,
+    style: styles.colorGray,
+  });
 
   useEffect(() => {
     const time = new Date();
@@ -65,11 +70,54 @@ export default function FullTimer(props) {
     setModalVisible(false);
   };
 
+  const toggleRepeat = () => {
+    if (repeat.on) {
+      setRepeat({ ...repeat, on: false, style: styles.colorGray });
+      // await setRepeatOn(false);
+      // await setRepeatStyle(styles.colorGray);
+    } else {
+      setRepeat({ ...repeat, on: true, style: styles.colorYellow });
+      // await setRepeatOn(true);
+      // await setRepeatStyle(styles.colorYellow);
+    }
+  };
+
+  const updateRepeat = (reset, start) => {
+    console.log(reset);
+    if (repeat.on) {
+      setRepeat({ ...repeat, count: repeat.count + 1 });
+    } else {
+      setRightButton({ rightButt: "Start", rightButtstyle: styles.greenButt });
+    }
+  };
+
   return (
-    <View style={layoutStyles.wrapper}>
-      <View style={layoutStyles.titleBar}>
-        <Text>{utils.getIdName(id)}</Text>
-        <View style={styles.rowJustiCenter}>
+    <View style={[styles.timerBox]}>
+      {/* Title BAR */}
+      <View style={styles.rowJustiCenter}>
+        <View
+          style={{ flexDirection: "row", flex: 0.75, alignItems: "center" }}
+        >
+          {/* REPEAT */}
+          <Pressable
+            style={styles.rowJustiCenter}
+            onPress={() => {
+              toggleRepeat();
+            }}
+          >
+            <Text style={repeat.style}>Re </Text>
+            <Text style={repeat.style}>{repeat.count}</Text>
+          </Pressable>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignSelf: "flex-end",
+            alignItems: "center",
+            flex: 0.25,
+          }}
+        >
+          {/* EDIT */}
           <Pressable
             onPress={() => {
               newHour(hours);
@@ -78,43 +126,88 @@ export default function FullTimer(props) {
               setModalVisible(true);
             }}
           >
-            <Text>Edit </Text>
+            <Feather
+              name="edit"
+              size={17}
+              style={[styles.colorYellow, { paddingRight: 5 }]}
+            />
           </Pressable>
+          {/* DELETE */}
           <Pressable
-            aria-label="delete"
             onPress={() => {
               removeTimer();
             }}
           >
-            <Text style={{ backgroundColor: "red" }}>X</Text>
+            <MaterialIcons
+              name="delete-outline"
+              size={20}
+              style={{ color: "red", paddingRight: 5 }}
+            />
           </Pressable>
         </View>
       </View>
 
-      {/* TimerBody */}
-      <View style={timerStyles.actualTimer}>
-        {/* Clock */}
-        <View style={styles.rowJustiCenter}>
-          <Text style={styles.timerText}>
-            {hours < 10 ? `0${hours}` : hours}
-          </Text>
-          <Text>:</Text>
-          <Text style={styles.timerText}>
-            {minutes < 10 ? `0${minutes}` : minutes}
-          </Text>
-          <Text>:</Text>
-          <Text style={styles.timerText}>
-            {seconds < 10 ? `0${seconds}` : seconds}
-          </Text>
-        </View>
+      {/* TITLE */}
+      <View style={[styles.rowJustiCenter, { paddingTop: 5 }]}>
+        <Text style={styles.colorYellow} numberOfLines={1}>
+          {utils.getIdName(id)}
+        </Text>
       </View>
-      <TimeButtons
-        pause={() => pause()}
-        resume={() => resume()}
-        restart={(time) => restart(time)}
-        isRunning={() => isRunning}
-        input={() => input}
-      />
+
+      {/* Clock */}
+      <View style={[styles.rowJustiCenter, { alignItems: "center" }]}>
+        <Text style={[styles.timerText, styles.colorYellow]}>
+          {hours < 10 ? `0${hours}` : hours}
+        </Text>
+        <Text style={styles.colorGray}>:</Text>
+        <Text style={[styles.timerText, styles.colorYellow]}>
+          {minutes < 10 ? `0${minutes}` : minutes}
+        </Text>
+        <Text style={styles.colorGray}>:</Text>
+        <Text style={[styles.timerText, styles.colorYellow]}>
+          {seconds < 10 ? `0${seconds}` : seconds}
+        </Text>
+      </View>
+
+      {/* Button Control */}
+      <View style={styles.rowJustiCenter}>
+        <Pressable
+          style={[styles.button, styles.buttonBordered]}
+          onPress={() => {
+            console.log("restarttttttttt");
+            let time = utils.parseTime(input);
+            restart(time);
+            setRightButton({ text: "Start", style: styles.greenButt });
+            pause();
+          }}
+        >
+          <Text style={styles.colorYellow}>Replay</Text>
+        </Pressable>
+        <Pressable
+          style={
+            isRunning
+              ? [styles.button, styles.buttonBordered, styles.redButt]
+              : [styles.button, styles.buttonBordered, styles.greenButt]
+          }
+          onPress={() => {
+            if (!isRunning) {
+              resume();
+              setRightButton({ text: "Pause", style: styles.redButt });
+            } else {
+              pause();
+              setRightButton({ text: "Start", style: styles.greenButt });
+            }
+          }}
+        >
+          {isRunning ? (
+            <Text style={styles.redButt}>Pause</Text>
+          ) : (
+            <Text style={styles.greenButt}>Start</Text>
+          )}
+        </Pressable>
+      </View>
+
+      {/* Edit Timer modal */}
       <Modal
         animationType="slide"
         transparent={false}
@@ -132,7 +225,7 @@ export default function FullTimer(props) {
             placeholder="Title"
             placeholderTextColor="#777777"
           />
-          <View style={styles.rowCenter}>
+          <View style={styles.rowJustiCenter}>
             <TextInput
               ref={href}
               style={styles.timeInput}

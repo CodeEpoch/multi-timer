@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import SortButton from "./SortButton";
-import AddTimerBtn from "./AddTimerBtn";
-import { TextInput, View } from "react-native";
+import { TextInput, View, Pressable } from "react-native";
 // https://www.npmjs.com/package/react-native-popup-menu
-import { MenuProvider } from "react-native-popup-menu";
-
+import { styles } from "../../styles/StyleSheet";
+import { Ionicons } from "@expo/vector-icons";
 // https://www.npmjs.com/package/react-native-paper
 // https://www.npmjs.com/package/react-native-text-input-mask
 
@@ -14,35 +13,40 @@ export default function SearchBar(props) {
 
   useEffect(() => {
     changeInputFilter(inputFilter);
-    // eslint-disable-next-line
   }, [inputFilter]);
 
   return (
-    <MenuProvider>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          backgroundColor: "blue",
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        backgroundColor: "#ffe500",
+        alignItems: "center",
+      }}
+    >
+      <SortButton
+        sortList={(sortMethod) => {
+          sortList(sortMethod);
         }}
-      >
-        <SortButton
-          sortList={(sortMethod) => {
-            sortList(sortMethod);
-          }}
-        />
-        <TextInput
-          value={inputFilter}
-          onChangeText={setinputFilter}
-          placeholder="Search…"
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              setinputFilter("");
-            }
-          }}
-        />
-        <AddTimerBtn createTimer={createTimer} />
+      />
+      {/* Search */}
+      <TextInput
+        value={inputFilter}
+        onChangeText={setinputFilter}
+        placeholder="Search…"
+        style={{ flex: 0.8, paddingLeft: 8 }}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            setinputFilter("");
+          }
+        }}
+      />
+      {/* Add Timer Button */}
+      <View>
+        <Pressable onPress={() => createTimer()}>
+          <Ionicons name="add-circle-outline" size={28} color="black" />
+        </Pressable>
       </View>
-    </MenuProvider>
+    </View>
   );
 }
