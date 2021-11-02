@@ -70,6 +70,7 @@ export default function App() {
         timeoutSeconds: 55,
         id: `${title} ${timerList.length}`,
         expiryTimestamp: 55,
+        repeatCount: 0,
       },
     ]);
   }
@@ -82,7 +83,16 @@ export default function App() {
     newList[timerIndex].id = title;
     newList[timerIndex].timeoutSeconds = seconds;
     newList[timerIndex].expiryTimestamp = seconds;
-    // console.log("timerChange", timer, "sec", seconds);
+    newList[timerIndex].repeatCount = 0;
+    setTimerList(newList);
+  }
+
+  function timerRepeatChange(timer, count) {
+    let newList = [...timerList];
+    const timerIndex = newList.findIndex((obj) => {
+      return obj.id === timer.id;
+    });
+    newList[timerIndex].repeatCount = count;
     setTimerList(newList);
   }
 
@@ -139,10 +149,12 @@ export default function App() {
                     .includes(InputFilter.toLocaleLowerCase())
                 }
                 expiryTimestamp={timer.expiryTimestamp}
+                repeatCount={timer.repeatCount}
                 removeTimer={() => removeTimer(timer)}
                 timerChange={(seconds, title) =>
                   timerChange(timer, seconds, title)
                 }
+                timerRepeatChange={(count) => timerRepeatChange(timer, count)}
               />
             ))}
           </View>

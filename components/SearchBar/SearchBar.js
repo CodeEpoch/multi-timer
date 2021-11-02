@@ -4,8 +4,6 @@ import { TextInput, View, Pressable } from "react-native";
 // https://www.npmjs.com/package/react-native-popup-menu
 import { styles } from "../../styles/StyleSheet";
 import { Ionicons } from "@expo/vector-icons";
-// https://www.npmjs.com/package/react-native-paper
-// https://www.npmjs.com/package/react-native-text-input-mask
 
 export default function SearchBar(props) {
   const { createTimer, changeInputFilter, sortList } = props;

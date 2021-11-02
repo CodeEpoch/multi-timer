@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 // https://github.com/amrlabib/react-timer-hook
-import { useTimer } from "react-timer-hook";
+import useTimer from "./timer-hook/Timer";
 import * as utils from "../utils";
 import { View, Text, Modal, TextInput, Pressable } from "react-native";
 import { styles } from "../../styles/StyleSheet";
@@ -8,7 +8,15 @@ import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export default function FullTimer(props) {
-  let { expiryTimestamp, timerChange, removeTimer, id, isHidden } = props;
+  let {
+    expiryTimestamp,
+    repeatCount,
+    timerChange,
+    timerRepeatChange,
+    removeTimer,
+    id,
+    isHidden,
+  } = props;
   const [input, setInput] = useState();
   const { seconds, minutes, hours, isRunning, pause, resume, restart } =
     useTimer({
@@ -16,9 +24,14 @@ export default function FullTimer(props) {
       expiryTimestamp,
       onExpire: () => {
         let time = utils.parseTime(input);
-        restart(time);
-        pause();
-        utils.playAudio(id);
+        if (repeat.on) {
+          timerRepeatChange(repeat.count + 1);
+          setRepeat({ ...repeat, count: repeat.count + 1 });
+          restart(time, true);
+        } else {
+          restart(time, false);
+          utils.playAudio(id);
+        }
       },
     });
 
@@ -30,9 +43,8 @@ export default function FullTimer(props) {
   const [min, newMin] = useState(minutes);
   const [sec, newSec] = useState(seconds);
   const [modalVisible, setModalVisible] = useState(false);
-  // const [repeatOn, setRepeatOn] = useState(false);
   const [repeat, setRepeat] = useState({
-    count: 0,
+    count: repeatCount,
     on: false,
     style: styles.colorGray,
   });
@@ -47,11 +59,8 @@ export default function FullTimer(props) {
     // check for input cuz input might not be initialized at start
     if (input) {
       let time = utils.parseTime(input);
-      restart(time);
-      pause();
+      restart(time, false);
     }
-    // console.log("inputtttttttttttttt", utils.parseTime(input, true));
-    // console.log("seconds, minutes, hours", seconds, minutes, hours);
   }, [input]);
 
   if (isHidden) return <></>;
@@ -72,21 +81,8 @@ export default function FullTimer(props) {
   const toggleRepeat = () => {
     if (repeat.on) {
       setRepeat({ ...repeat, on: false, style: styles.colorGray });
-      // await setRepeatOn(false);
-      // await setRepeatStyle(styles.colorGray);
     } else {
       setRepeat({ ...repeat, on: true, style: styles.colorYellow });
-      // await setRepeatOn(true);
-      // await setRepeatStyle(styles.colorYellow);
-    }
-  };
-
-  const updateRepeat = (reset, start) => {
-    console.log(reset);
-    if (repeat.on) {
-      setRepeat({ ...repeat, count: repeat.count + 1 });
-    } else {
-      setRightButton({ rightButt: "Start", rightButtstyle: styles.greenButt });
     }
   };
 
@@ -175,7 +171,6 @@ export default function FullTimer(props) {
         <Pressable
           style={[styles.button, styles.buttonBordered]}
           onPress={() => {
-            console.log("restarttttttttt");
             let time = utils.parseTime(input);
             restart(time);
             pause();
