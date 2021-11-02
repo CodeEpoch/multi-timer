@@ -6,6 +6,7 @@ import { View, Text, Modal, TextInput, Pressable } from "react-native";
 import { styles } from "../../styles/StyleSheet";
 import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function FullTimer(props) {
   let {
@@ -100,8 +101,8 @@ export default function FullTimer(props) {
               toggleRepeat();
             }}
           >
-            <Text style={repeat.style}>Re </Text>
-            <Text style={repeat.style}>{repeat.count}</Text>
+            <Ionicons name="repeat" size={20} style={repeat.style} />
+            <Text style={repeat.style}>{` ${repeat.count}`}</Text>
           </Pressable>
         </View>
         <View

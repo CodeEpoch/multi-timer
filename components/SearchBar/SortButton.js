@@ -21,7 +21,12 @@ function SortButton(props) {
         <FontAwesome
           name="sort"
           size={24}
-          style={{ padding: 7, color: "black" }}
+          style={{
+            paddingLeft: 10,
+            color: "black",
+            // height: 30,
+            width: 30,
+          }}
         />
       </MenuTrigger>
       <MenuOptions>

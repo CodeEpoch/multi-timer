@@ -1,6 +1,4 @@
 // import * as audioURL from "../media/Leapfrog.ogg";
-// https://sweetalert2.github.io/
-import Swal from "sweetalert2";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 

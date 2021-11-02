@@ -14,8 +14,6 @@ import {
 import FullTimer from "./components/SingleTimer/FullTimer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import React, { useEffect, useState } from "react";
-// https://sweetalert2.github.io/
-import Swal from "sweetalert2";
 import { styles } from "./styles/StyleSheet";
 // import "./index.css";
 import AsyncStorage from "@react-native-async-storage/async-storage";
