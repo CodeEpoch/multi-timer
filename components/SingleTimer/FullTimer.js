@@ -39,7 +39,7 @@ export default function FullTimer(props) {
   const href = React.createRef();
   const mref = React.createRef();
   const sref = React.createRef();
-  const [title, newTitle] = useState(id);
+  const [title, newTitle] = useState(utils.getIdName(id));
   const [hour, newHour] = useState(hours);
   const [min, newMin] = useState(minutes);
   const [sec, newSec] = useState(seconds);
@@ -68,8 +68,6 @@ export default function FullTimer(props) {
 
   const editTimer = (hour, min, sec) => {
     let anewSec = hour * 60 * 60 + min * 60 + sec;
-    anewSec = anewSec ? anewSec : 300;
-
     const newtime = new Date();
     newtime.setHours(hour, min, sec, 0);
     setInput(newtime);
@@ -102,7 +100,9 @@ export default function FullTimer(props) {
             }}
           >
             <Ionicons name="repeat" size={20} style={repeat.style} />
-            <Text style={repeat.style}>{` ${repeat.count}`}</Text>
+            <Text style={repeat.style}>
+              {repeat.count > 0 ? ` ${repeat.count}` : null}
+            </Text>
           </Pressable>
         </View>
         <View
@@ -146,7 +146,7 @@ export default function FullTimer(props) {
       {/* TITLE */}
       <View style={[styles.rowJustiCenter, { paddingTop: 5 }]}>
         <Text style={styles.colorYellow} numberOfLines={1}>
-          {id}
+          {utils.getIdName(id)}
         </Text>
       </View>
 
@@ -177,7 +177,7 @@ export default function FullTimer(props) {
             pause();
           }}
         >
-          <Text style={styles.colorYellow}>Replay</Text>
+          <Text style={styles.colorYellow}>Restart</Text>
         </Pressable>
         <Pressable
           style={

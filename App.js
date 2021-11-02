@@ -30,14 +30,15 @@ LogBox.ignoreAllLogs();
 //====================================
 
 export default function App() {
-  const tt = [
-    { timeoutSeconds: "3720010", id: "wahahah 2", expiryTimestamp: "3720010" },
-    { timeoutSeconds: 1830, id: "yeee 2", expiryTimestamp: 1830 },
-  ];
   const [timerList, setTimerList] = useState([]);
   const [InputFilter, setInputFilter] = useState("");
-  const [title, newTitle] = useState("yeee");
-  const [time, newTime] = useState(60);
+  const href = React.createRef();
+  const mref = React.createRef();
+  const sref = React.createRef();
+  const [title, newTitle] = useState();
+  const [hour, newHour] = useState(0);
+  const [min, newMin] = useState(0);
+  const [sec, newSec] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
   // get timerList on init
@@ -61,13 +62,15 @@ export default function App() {
     timerList.length !== 0 ? setTimers(timerList) : null;
   }, [timerList]);
 
-  function createTimer() {
+  function createTimer(title, hour, min, sec) {
+    const newSec = hour * 60 * 60 + min * 60 + sec;
+    title = title ? title : "aya";
     setTimerList((timerList) => [
       ...timerList,
       {
-        timeoutSeconds: 55,
+        timeoutSeconds: newSec,
         id: `${title} ${timerList.length}`,
-        expiryTimestamp: 55,
+        expiryTimestamp: newSec,
         repeatCount: 0,
       },
     ]);
@@ -176,11 +179,51 @@ export default function App() {
               placeholder="Title"
               placeholderTextColor="#777777"
             />
+            <View style={styles.rowJustiCenter}>
+              <TextInput
+                ref={href}
+                style={styles.timeInput}
+                value={hour.toString()}
+                onChangeText={(value) => {
+                  newHour(Number(value));
+                  if (value > 9) mref.current.focus();
+                }}
+                placeholder="hh"
+                placeholderTextColor="#777777"
+                maxLength={2}
+                keyboardType="numeric"
+              />
+              <TextInput
+                ref={mref}
+                style={styles.timeInput}
+                value={min.toString()}
+                onChangeText={(value) => {
+                  newMin(Number(value));
+                  if (value > 9) sref.current.focus();
+                }}
+                placeholder="mm"
+                placeholderTextColor="#777777"
+                maxLength={2}
+                keyboardType="numeric"
+              />
+              <TextInput
+                ref={sref}
+                style={styles.timeInput}
+                value={sec.toString()}
+                onChangeText={(value) => {
+                  newSec(Number(value));
+                }}
+                placeholder="ss"
+                placeholderTextColor="#777777"
+                maxLength={2}
+                keyboardType="numeric"
+              />
+            </View>
 
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => {
-                createTimer(title, time);
+                createTimer(title, hour, min, sec);
                 setModalVisible(false);
               }}
             >
