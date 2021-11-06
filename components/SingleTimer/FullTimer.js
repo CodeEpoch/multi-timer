@@ -45,6 +45,7 @@ export default function FullTimer(props) {
   const [min, newMin] = useState(minutes);
   const [sec, newSec] = useState(seconds);
   const [modalVisible, setModalVisible] = useState(false);
+  const [targetVisible, setTargetVisible] = useState(false);
   const [repeat, setRepeat] = useState({
     count: repeatCount,
     on: false,
@@ -85,6 +86,21 @@ export default function FullTimer(props) {
       setRepeat({ ...repeat, on: false, style: styles.colorGray });
     } else {
       setRepeat({ ...repeat, on: true, style: styles.colorYellow });
+    }
+  };
+
+  const toggleTargetTime = () => {
+    if (targetVisible) {
+      let time = new Date();
+      let durationSeconds = hours * 60 ** 2 + minutes * 60 + seconds;
+      time.setSeconds(time.getSeconds() + durationSeconds);
+      return (
+        <View style={[styles.rowJustiCenter, styles.targetTimer]}>
+          <Text style={[styles.colorGray, styles.targetTimerText]}>
+            {time.toLocaleTimeString("en-US")}
+          </Text>
+        </View>
+      );
     }
   };
 
@@ -170,6 +186,9 @@ export default function FullTimer(props) {
         </Text>
       </View>
 
+      {/* show Target Time */}
+      {toggleTargetTime()}
+
       {/* Button Control */}
       <View style={styles.rowJustiCenter}>
         <Pressable
@@ -191,8 +210,10 @@ export default function FullTimer(props) {
           onPress={() => {
             if (!isRunning) {
               resume();
+              setTargetVisible(true);
             } else {
               pause();
+              setTargetVisible(false);
             }
           }}
         >

@@ -79,7 +79,7 @@ export default function App() {
     const timerIndex = newList.findIndex((obj) => {
       return obj.id === timer.id;
     });
-    newList[timerIndex].id = title;
+    newList[timerIndex].id = `${title} ${timerList.length}`;
     newList[timerIndex].timeoutSeconds = seconds;
     newList[timerIndex].expiryTimestamp = seconds;
     newList[timerIndex].repeatCount = 0;

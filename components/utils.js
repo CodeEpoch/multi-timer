@@ -5,9 +5,7 @@ const soundFile = {
   clap: require("../assets/media/mixkit-small-crowd-ovation.mp3"),
 };
 
-/**
- * @param {string} id - timer id
- */
+// @param {string} id - timer id
 export function getIdName(id) {
   return id.substring(0, id.lastIndexOf(" "));
 }
@@ -17,6 +15,11 @@ export function getIdName(id) {
  * @param {Number} timeout - time in milliseconds
  */
 export async function playSound(fileName, timeout) {
+  // await Audio.requestPermissionsAsync();
+  await Audio.setAudioModeAsync({
+    staysActiveInBackground: true, // only work in standalone android apps
+    playsInSilentModeIOS: true,
+  });
   // Loading Sound
   const { sound } = await Audio.Sound.createAsync(soundFile[fileName]);
   // Play Sound

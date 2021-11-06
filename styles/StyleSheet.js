@@ -25,6 +25,14 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     letterSpacing: 1,
   },
+  targetTimer: {
+    marginTop: -10,
+    marginBottom: -6,
+    height: 16,
+  },
+  targetTimerText: {
+    fontSize: 12,
+  },
   button: {
     flex: 0.5,
     height: 40,
