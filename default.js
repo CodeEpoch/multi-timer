@@ -1,4 +1,4 @@
-const DEFAULT = [
+export const DEFAULT_TIMER = [
   {
     timeoutSeconds: 3600,
     id: "Walk",

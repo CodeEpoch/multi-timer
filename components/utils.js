@@ -1,24 +1,30 @@
-// import * as audioURL from "../media/Leapfrog.ogg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from "react-native";
+import { Audio } from "expo-av";
 
+const soundFile = {
+  alarm: require("../assets/media/mixkit-facility-alarm-sound.mp3"),
+  clap: require("../assets/media/mixkit-small-crowd-ovation.mp3"),
+};
+
+/**
+ * @param {string} id - timer id
+ */
 export function getIdName(id) {
   return id.substring(0, id.lastIndexOf(" "));
 }
 
-export function playAudio(id) {
-  // let audio = new Audio(audioURL);
-  // audio.loop = true;
-  // audio.play();
-  Alert.alert("Alert Title", "My Alert Msg", [
-    {
-      text: "OK",
-      onPress: () => {
-        // audio.loop = false;
-        // audio.pause();
-      },
-    },
-  ]);
+/**
+ * @param {string} fileName - file name
+ * @param {Number} timeout - time in milliseconds
+ */
+export async function playSound(fileName, timeout) {
+  // Loading Sound
+  const { sound } = await Audio.Sound.createAsync(soundFile[fileName]);
+  // Play Sound
+  await sound.playAsync();
+  // unload the Sound after using it to prevent memory leaks.
+  setTimeout(async function () {
+    await sound.unloadAsync();
+  }, timeout);
 }
 
 /**
@@ -39,6 +45,9 @@ export function parseTime(input, onlySeconds) {
   return time;
 }
 
+/**
+ * @returns {Date}
+ */
 function getMidNight() {
   // workaround to get 00:00:00 at timer's creation
   const time = new Date();

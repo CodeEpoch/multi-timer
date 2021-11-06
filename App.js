@@ -15,11 +15,9 @@ import FullTimer from "./components/SingleTimer/FullTimer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import React, { useEffect, useState } from "react";
 import { styles } from "./styles/StyleSheet";
-// import "./index.css";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as utils from "./components/utils";
 import { MenuProvider } from "react-native-popup-menu";
-import { FontAwesome } from "@expo/vector-icons";
+import { DEFAULT_TIMER } from "./default";
 
 //===================================
 import { LogBox } from "react-native";
@@ -46,7 +44,7 @@ export default function App() {
     async function getStorage() {
       try {
         let timerStorage = await AsyncStorage.getItem("timerList");
-        setTimerList(JSON.parse(timerStorage));
+        timerStorage ? setTimerList(JSON.parse(timerStorage)) : null;
       } catch (e) {
         return [];
       }

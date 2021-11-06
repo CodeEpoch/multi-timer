@@ -28,10 +28,11 @@ export default function FullTimer(props) {
         if (repeat.on) {
           timerRepeatChange(repeat.count + 1);
           setRepeat({ ...repeat, count: repeat.count + 1 });
+          utils.playSound("clap", 3000);
           restart(time, true);
         } else {
+          utils.playSound("alarm", 3000);
           restart(time, false);
-          utils.playAudio(id);
         }
       },
     });
@@ -50,12 +51,14 @@ export default function FullTimer(props) {
     style: styles.colorGray,
   });
 
+  // initialize time
   useEffect(() => {
     const time = new Date();
     time.setHours(0, 0, expiryTimestamp, 0);
     setInput(time);
   }, []);
 
+  // update time on input(time) change
   useEffect(() => {
     // check for input cuz input might not be initialized at start
     if (input) {
