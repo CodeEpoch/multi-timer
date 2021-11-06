@@ -21,6 +21,8 @@
       }
     },
     "android": {
+      "package": "com.george.Multi_Timer",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
