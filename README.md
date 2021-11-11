@@ -17,6 +17,7 @@ npm install
 npm start
 ```
 
+- If you don't have expo-cli installed, `npm start` will promote you to install it. If you don't want to install on global, run `npm install expo-cli` to install in the local directory.
 - If you got "Expo Go" App from Play Store or App Store, pull out your phone & use Expo Go to scan the QR Code
 - Or open an Android emulator
 
