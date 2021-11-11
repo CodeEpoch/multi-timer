@@ -7,7 +7,7 @@ Checkout his react web timer here -> https://github.com/ginop-1/react-timer-app
 
 ## Preview:
 
-![Multi-timer app Preview]<img src=https://github.com/CodeEpoch/multi-timer/blob/main/assets/multi-timer.jpg width="244" height="528">
+<img src=https://github.com/CodeEpoch/multi-timer/blob/main/assets/multi-timer.jpg alt="Multi-timer app Preview" width="244" height="528">
 
 ## To run the app:
 
